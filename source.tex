@@ -49,9 +49,10 @@
 \def\C/{\e{C}}
 \def\D/{\e{D}}
 \def\X/{\e{X}}
-\def\sat/{\e{\pi}}
+\def\Y/{\e{Y}}
+\def\prf/{\e{\pi}}
 \def\Domain/{\e{D}}
-\newcommand\Sat[3]{\e{\pi_{#1_{#2}^{#3}}}}
+\newcommand\Prf[2]{\e{\pi^{#2}_{#1}}}
 \newcommand\Contradictory[1]{\e{#1^{\Empty/}}}
 \newcommand\Contrary[1]{\e{#1^{\oplus}}}
 
@@ -130,11 +131,11 @@
 \end{quote}
 
 \noindent
-I formalize Aristotle's theory of the assertoric (non-modal) syllogism with Per Martin-L\"of's constructive type theory (\CTT/), where propositions are identified with the sets of their proofs \emph{\`a la} the Curry-Howard isomorphism. More exactly, a proposition is a type, and its proofs are its inhabitants. A proposition is realized (you could say ``true'') if it has inhabitants.
+I formalize Aristotle's theory of the assertoric (non-modal) syllogism with Per Martin-L\"of's constructive type theory (\CTT/), where propositions are identified with the sets of their proofs \emph{\`a la} the Curry-Howard isomorphism. More exactly, a proposition is a type, and its proofs are its inhabitants. I will say that a proposition is realized (you could say ``true'') if it has inhabitants.
 
-This task is straightforward, but as far as I know, it has not been done, so it seems worthwhile to show the details. Moreover, it seems to me that type theory is a natural framework in which to encode Aristotle's logic.
+This task is straightforward, but it is novel, so it seems worthwhile to show the details. Moreover, it seems to me that type theory is a natural framework in which to encode Aristotle's logic.
 
-In section 1, I briefly recount Aristotle's theory of the assertoric syllogism. In section 2, I turn to the task of formalization and encode Aristotelian categorical sentences in \CTT/. In section 3, I encode Aristotle's inference rules that govern his theory of the assertoric syllogism, then I use those rules to replay Aristotle's own constructions of the second and third figure syllogisms. In section 4, I prove that the encoding is well-behaved in certain respects. In section 5, I conclude with a discussion of why I think type theory is such a natural fit.
+In section \ref{sec:aristotle-on-assertoric-syllogisms}, I briefly recount Aristotle's theory of the assertoric syllogism. In section \ref{sec:categorical-sentences}, I turn to the task of formalization and encode Aristotelian categorical sentences in \CTT/. In section \ref{sec:assertoric-syllogisms}, I encode Aristotle's inference rules that govern his theory of the assertoric syllogism, then I use those rules to replay Aristotle's own constructions of the second and third figure syllogisms. In section \ref{sec:well-behavedness}, I prove that the encoding is well-behaved in certain respects. In section \ref{sec:why-type-theory}, I offer some remarks on why I think type theory is such a natural fit. In section \ref{sec:related-work}, I conclude with a discussion of related work. 
 
 In what follows, I assume familiarity with (and so provide no exposition of) Martin-L\"of's type theory. I follow \citet{MartinLof1984} in all essential details, though I enumerate the particular form of the inference rules and notational conventions I employ in the appendix.
 
@@ -144,6 +145,7 @@ In what follows, I assume familiarity with (and so provide no exposition of) Mar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Aristotle on assertoric syllogisms}
+\label{sec:aristotle-on-assertoric-syllogisms}
 
 In this section, I summarize Aristotle's theory of the assertoric syllogism, as he presents it more or less completely in \AnPr/~1.1--7. For further details on Aristotle's logic, see \citet{Smith1995}.
 
@@ -240,7 +242,7 @@ Aristotle groups all possible syllogisms under three headings, based on where th
   \end{tabular}
 \end{center}
 
-Aristotle identifies four valid syllogism schemata in the first figure, four in the second figure, and six in the third figure. (Later writers identify further forms, but they are weaker variants of the syllogisms Aristotle identifies, and again, I stick to Aristotle's presentation.)
+Aristotle identifies four valid syllogism schemata in the first figure, four in the second figure, and six in the third figure. (Later writers identify further forms, but they are weaker variants of the ones Aristotle identifies, and again, I stick to Aristotle's presentation.)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +262,7 @@ All of this can be encoded in \CTT/ in a straightforward way. I turn to that tas
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Categorical sentences}
+\label{sec:categorical-sentences}
 
 As noted above, assertoric syllogisms are built up from categorical sentences. The first step in formalizing assertoric syllogisms is thus to encode these sentences in \CTT/. I do that in this section.
 
@@ -280,7 +283,7 @@ Since it is a finite base type, the domain $\Domain/$ is constructed with the fo
   \hypo{}
   \infer1[\Form{\Domain/}]{\Domain/ : \Type/}
 \end{prooftree*}
-  
+
 The canonical inhabitants of finite types are explicitly introduced. If $\subs{d}{1}$, $\ldots$, $\subs{d}{n}$ are the inhabitants of the domain $\Domain/$, then each is introduced with a distinct introduction rule:
   
 $$
@@ -306,7 +309,7 @@ As expected, the elimination and computation rules operate on the domain by case
 \end{notation}
 
 \begin{notation}  
-  I use $\subs{d}{1}$, $\ldots$, $\subs{d}{n}$ to denote the inhabitants of the domain, but again, reasoners might prefer more evocative names for convenience. For instance, one might prefer to give $\e{Bird}$ inhabitants names such as $\e{Finch}$, $\e{Swallow}$, and the like, or one might prefer to give $\e{Subtance}$ inhabitants names like $\e{Aspasia}$, $\e{Bucephalus}$, and so on. 
+  I use $\subs{d}{1}$, $\ldots$, $\subs{d}{n}$ to denote the inhabitants of the domain, but again, reasoners might prefer more evocative names for convenience. For instance, one might prefer to give $\e{Subtance}$ inhabitants names like $\e{Aspasia}$, $\e{Bucephalus}$, and so on. 
 \end{notation}
 
 
@@ -365,7 +368,7 @@ Each of these represents a concrete predication. For example, $\Dep{A}{\subs{d}{
   A predication is a finite type $\Dep{A}{\subs{d}{i}}$ obtained by taking a predicate $\Dep{A}{x}$ that ranges over the domain $\Domain/$ and replacing $\x/$ with an inhabitant $\subs{d}{i}$ of $\Domain/$.
 \end{definition}
 
-Note that a predicate $\Dep{A}{x}$ represents a predicate in the abstract. It is roughly equivalent to the predicate ``\Blank/ is $\A/$,'' where the blank needs to be filled in by a name. By contrast, the type $\Dep{A}{\subs{d}{1}}$ represents a concrete proposition --- i.e., ``$\subs{d}{1}$ is $\A/$'' --- where the blank is filled in with a name.
+Note that a predicate $\Dep{A}{x}$ represents a predicate in the abstract. It is roughly equivalent to the predicate``$\x/$ is $\A/$,'' or perhaps ``\Blank/ is $\A/$,'' where the $\x/$ or the blank needs to be filled in by a name. By contrast, the type $\Dep{A}{\subs{d}{1}}$ represents a concrete proposition --- i.e., ``$\subs{d}{1}$ is $\A/$'' --- where the blank is filled in with the name $\subs{d}{1}$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -375,11 +378,11 @@ Note that a predicate $\Dep{A}{x}$ represents a predicate in the abstract. It is
 Predications like $\Dep{A}{\subs{d}{1}}$, $\ldots$, $\Dep{A}{\subs{d}{n}}$ are finite types. What are their inhabitants? They are inhabited by proofs that the object in question satisfies the predicate. 
 
 \begin{definition}[Inhabitants of predications]
-  A predication $\Dep{A}{\subs{d}{i}}$ is inhabited by zero or more proofs $\Sat{d}{i}{1}$, $\ldots$, $\Sat{d}{i}{n}$ that the object $\subs{d}{i}$ satisfies the predicate $\Dep{A}{x}$.
+  A predication $\Dep{A}{\subs{d}{i}}$ is inhabited by zero or more proofs $\Prf{\Dep{A}{\subs{d}{i}}}{1}$, $\ldots$, $\Prf{\Dep{A}{\subs{d}{i}}}{n}$ that the object $\subs{d}{i}$ satisfies the predicate $\Dep{A}{x}$.
 \end{definition}
 
 \begin{notation}
-  I use a $\sat/$ symbol to denote a proof that an object satisfies a predicate, but for the sake of bookkeeping, I add subscripts to identify which object the proof belongs to.
+  I use a $\prf/$ symbol to denote a proof that an object satisfies a predicate, but for the sake of bookkeeping, I may add subscripts to identify which predication the proof inhabits, and superscripts to distinguish distinct proofs for the same predication.
 \end{notation}
 
 Since predications are finite types, each proof is explicitly introduced with an introduction rule. For example:
@@ -387,12 +390,12 @@ Since predications are finite types, each proof is explicitly introduced with an
 $$
 \begin{prooftree}
   \hypo{\Dep{A}{\subs{d}{1}} : \Type/}
-  \infer1[\Intro{\Sat{d}{1}{}}]{\Sat{d}{1}{} : \Dep{A}{\subs{d}{1}}}
+  \infer1[\Intro{\Prf{\Dep{A}{\subs{d}{1}}}{}}]{\Prf{\Dep{A}{\subs{d}{1}}}{} : \Dep{A}{\subs{d}{1}}}
 \end{prooftree}
 \hskip 0.5cm
 \begin{prooftree}
   \hypo{\Dep{A}{\subs{d}{2}} : \Type/}
-  \infer1[\Intro{\Sat{d}{2}{}}]{\Sat{d}{2}{} : \Dep{A}{\subs{d}{2}}}
+  \infer1[\Intro{\Prf{\Dep{A}{\subs{d}{2}}}{}}]{\Prf{\Dep{A}{\subs{d}{2}}}{} : \Dep{A}{\subs{d}{2}}}
 \end{prooftree}
 \hskip 0.5cm
 \begin{prooftree}
@@ -443,7 +446,7 @@ Inhabitants are functions that map any putative proof of $\Dep{A}{\subs{d}{i}}$ 
   For convenience, I sometimes write $\Abstr{x}{\Dep{A}{\subs{d}{i}}}{\Empty/}$ as $\Dep{A}{\subs{d}{i}} \Arrow/ \Empty/$, or even $\lnot \Dep{A}{\subs{d}{i}}$.
 \end{notation}
 
-Denials can only be constructed for types that have no inhabitants, because that is when there are no cases.
+Denials can only be constructed for predications that have no inhabitants, because that is when there are no cases.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -467,12 +470,12 @@ Since they are dependent pairs, typed collections are constructed with the $\Sig
   \infer2[\Form{\SigmaBinder/}]{\Prod{x}{\Domain/}{\Dep{A}{x}} : \Type/}
 \end{prooftree*}
   
-A typed collection $\Prod{x}{\Domain/}{\Dep{A}{x}}$ is inhabited by all pairs whose first component is an object $\subs{d}{i}$ from the domain $\Domain/$ and whose second component is a $\Sat{d}{i}{}$ proof that $\subs{d}{i}$ satisfies $\Dep{A}{x}$. Inhabitants are constructed with the expected $\SigmaBinder/$ introduction rule:
+A typed collection $\Prod{x}{\Domain/}{\Dep{A}{x}}$ is inhabited by all pairs whose first component is an object $\subs{d}{i}$ from the domain $\Domain/$ and whose second component is a $\Prf{\Dep{A}{\subs{d}{i}}}{}$ proof that $\subs{d}{i}$ satisfies $\Dep{A}{x}$. Inhabitants are constructed with the expected $\SigmaBinder/$ introduction rule:
   
 \begin{prooftree*}
   \hypo{\subs{d}{i} : \Domain/}
-  \hypo{\subs{\sat/}{i} : \Dep{A}{d_{i}}}
-  \infer2[\Intro{\SigmaBinder/}]{\Pair{\subs{d}{i}}{\subs{\sat/}{i}} : \Prod{x}{\Domain/}{\Dep{A}{x}}}
+  \hypo{\Prf{\Dep{A}{\subs{d}{i}}}{} : \Dep{A}{d_{i}}}
+  \infer2[\Intro{\SigmaBinder/}]{\Pair{\subs{d}{i}}{\Prf{\Dep{A}{\subs{d}{i}}}{}} : \Prod{x}{\Domain/}{\Dep{A}{x}}}
 \end{prooftree*}
 
 \begin{notation}
@@ -499,12 +502,12 @@ Since they are dependent function types, universal predications are constructed 
   \infer2[\Form{\PiBinder/}]{\Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}} : \Type/}
 \end{prooftree*}
 
-A universal predication $\Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}$ is inhabited by any function that maps each inhabitant $\x/$ of $\Gen{A}{\Domain/}$ to a $\Sat{\First{x}}{}{}$ proof of $\Dep{B}{\First{x}}$. Such functions are introduced by the usual $\PiBinder/$ introduction rule:
+A universal predication $\Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}$ is inhabited by any function that maps each inhabitant $\x/$ of $\Gen{A}{\Domain/}$ to a $\Prf{\Dep{B}{\First{x}}}{}$ proof of $\Dep{B}{\First{x}}$. Such functions are introduced by the usual $\PiBinder/$ introduction rule:
   
 \begin{prooftree*}
   \hypo{\x/ : \Gen{A}{\Domain/}^{1}}
-  \ellipsis{}{\Sat{\First{x}}{}{} : \Dep{B}{\First{x}}}
-  \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{x}{\Gen{A}{\Domain/}}{\Sat{\First{x}}{}{}} : \Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}}
+  \ellipsis{}{\Prf{\Dep{B}{\First{x}}}{}{} : \Dep{B}{\First{x}}}
+  \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{x}{\Gen{A}{\Domain/}}{\Prf{\Dep{B}{\First{x}}}{}{}} : \Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}}
 \end{prooftree*}
 
 
@@ -558,12 +561,12 @@ Since they are dependent pair types, particular predications are constructed wit
   \infer2[\Form{\SigmaBinder/}]{\Prod{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}} : \Type/}
 \end{prooftree*}
 
-A particular predication $\Prod{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}$ is inhabited by all pairs whose first component is an inhabitant $\a/$ of $\Gen{A}{\Domain/}$ and whose second component is a $\Sat{\First{a}}{}{}$ proof of $\Dep{B}{\First{a}}$. Such pairs are introduced by the usual $\SigmaBinder/$ introduction rule:
+A particular predication $\Prod{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}$ is inhabited by all pairs whose first component is an inhabitant $\a/$ of $\Gen{A}{\Domain/}$ and whose second component is a $\Prf{\Dep{B}{\First{a}}}{}$ proof of $\Dep{B}{\First{a}}$. Such pairs are introduced by the usual $\SigmaBinder/$ introduction rule:
 
 \begin{prooftree*}
   \hypo{\a/ : \Gen{A}{\Domain/}}
-  \hypo{\Sat{\First{a}}{}{} : \Dep{B}{\First{a}}}
-  \infer2[\Intro{\SigmaBinder/}]{\Pair{a}{\Sat{\First{a}}{}{}} : \Prod{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{a}}}}
+  \hypo{\Prf{\Dep{B}{\First{a}}}{} : \Dep{B}{\First{a}}}
+  \infer2[\Intro{\SigmaBinder/}]{\Pair{a}{\Prf{\Dep{B}{\First{a}}}{}} : \Prod{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{a}}}}
 \end{prooftree*}
 
 
@@ -663,12 +666,12 @@ Let there be proofs that Aspasia and Callias are human (and let there be no such
 $$
 \begin{prooftree}
   \hypo{\Human{\Aspasia/} : \Type/}
-  \infer1[\Intro{\Sat{\Human{\Aspasia/}}{}{}}]{\Sat{\Human{\Aspasia/}}{}{} : \Human{\Aspasia/}}
+  \infer1[\Intro{\Prf{\Human{\Aspasia/}}{}}]{\Prf{\Human{\Aspasia/}}{} : \Human{\Aspasia/}}
 \end{prooftree}
 \hskip 0.5cm
 \begin{prooftree}
   \hypo{\Human{\Bucephalus/} : \Type/}
-  \infer1[\Intro{\Sat{\Human{\Bucephalus/}}{}{}}]{\Sat{\Human{\Bucephalus/}}{}{} : \Human{\Bucephalus/}}
+  \infer1[\Intro{\Prf{\Human{\Bucephalus/}}{}}]{\Prf{\Human{\Bucephalus/}}{} : \Human{\Bucephalus/}}
 \end{prooftree}
 $$
 
@@ -752,8 +755,8 @@ The inhabitants are Aspasia and Callias, along with the proofs that they are hum
   \infer1[\Form{\Subst/}]{\Subst/ : \Type/}  
   \infer1[\Intro{\Bucephalus/}]{\Aspasia/ : \Subst/}
   \infer2[\Form{\Human{\Aspasia/}}]{\Human{\Aspasia/} : \Type/}  
-  \infer1[\Intro{\Sat{\Human{\Aspasia/}}{}{}}]{\Sat{\Human{\Aspasia/}}{}{} : \Human{\Aspasia/}}
-  \infer2[\Intro{\SigmaBinder/}]{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}} : \Gen{\HumanSymbol/}{\Subst/}}
+  \infer1[\Intro{\Prf{\Human{\Aspasia/}}{}}]{\Prf{\Human{\Aspasia/}}{} : \Human{\Aspasia/}}
+  \infer2[\Intro{\SigmaBinder/}]{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}} : \Gen{\HumanSymbol/}{\Subst/}}
 \end{prooftree*}
 
 We can construct other typed collections in the same way. For instance, we can construct the collection of rational beings (which is inhabited by Aspasia and Callias plus the proofs that they are rational), and the collection of inorganic beings (which is empty). 
@@ -786,12 +789,12 @@ We can construct an inhabitant for this type as well. This is done by abstractin
   \infer1[\Hyp/]{\x/ : \Gen{\HumanSymbol/}{\Subst/}^{1}}
   \hypo{}
   \ellipsis{}{}
-  \infer1{\Sat{\Rational{\Aspasia/}}{}{} : \Rational{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}
+  \infer1{\Prf{\Rational{\Aspasia/}}{} : \Rational{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}
   \hypo{}
   \ellipsis{}{}
-  \infer1{\Sat{\Rational{\Callias/}}{}{} : \Rational{\First{\Pair{\Callias/}{\Sat{\Human{\Callias/}}{}{}}}}}
-  \infer3[\Elim{\Gen{\HumanSymbol/}{\Subst/}}]{\CaseThree{x}{\Sat{\Rational{\Aspasia/}}{}{}}{\Sat{\Rational{\Callias/}}{}{}} : \Rational{\First{x}}}
-  \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{x}{\Gen{\HumanSymbol/}{\Subst/}}{\CaseThree{x}{\Sat{\Rational{\Aspasia/}}{}{}}{\Sat{\Rational{\Callias/}}{}{}}} : \Abstr{x}{\Gen{\HumanSymbol/}{\Subst/}}{\Rational{\First{x}}}}
+  \infer1{\Prf{\Rational{\Callias/}}{} : \Rational{\First{\Pair{\Callias/}{\Prf{\Human{\Callias/}}{}}}}}
+  \infer3[\Elim{\Gen{\HumanSymbol/}{\Subst/}}]{\CaseThree{x}{\Prf{\Rational{\Aspasia/}}{}}{\Prf{\Rational{\Callias/}}{}} : \Rational{\First{x}}}
+  \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{x}{\Gen{\HumanSymbol/}{\Subst/}}{\CaseThree{x}{\Prf{\Rational{\Aspasia/}}{}}{\Prf{\Rational{\Callias/}}{}}} : \Abstr{x}{\Gen{\HumanSymbol/}{\Subst/}}{\Rational{\First{x}}}}
 \end{prooftree*}
 
 The cases are justified by the first projection of the inhabitants of $\Gen{\HumanSymbol/}{\Subst/}$. For example, to construct the first case:
@@ -799,17 +802,17 @@ The cases are justified by the first projection of the inhabitants of $\Gen{\Hum
 \begin{prooftree*}
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Intro{\Sat{\Rational{\Aspasia/}}{}{}}]{\Sat{\Rational{\Aspasia/}}{}{} : \Rational{\Aspasia/}}
+  \infer1[\Intro{\Prf{\Rational{\Aspasia/}}{}}]{\Prf{\Rational{\Aspasia/}}{} : \Rational{\Aspasia/}}
 
   \hypo{}
   \ellipsis{}{}
   \infer1[\Form{\Rational{\Aspasia/}}]{\Rational{\Aspasia/} : \Type/}
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Elim{\SigmaBinder/}]{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}} = \Aspasia/ : \Subst/}
-  \infer2[\Substitution/]{\Rational{\Aspasia/} = \Rational{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}} : \Type/}
+  \infer1[\Comp{\SigmaBinder/}$_{1}$]{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}} = \Aspasia/ : \Subst/}
+  \infer2[\Substitution/]{\Rational{\Aspasia/} = \Rational{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}} : \Type/}
 
-  \infer2[\Substitution/]{\Sat{\Rational{\Aspasia/}}{}{} : \Rational{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}
+  \infer2[\Substitution/]{\Prf{\Rational{\Aspasia/}}{} : \Rational{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}
 \end{prooftree*} 
 
 
@@ -856,35 +859,32 @@ We can construct an inhabitant for the universal denial, by abstracting over the
   \infer1[\Hyp/]{\x/ : \Gen{\HumanSymbol/}{\Subst/}^{1}}
   \hypo{}
   \ellipsis{}{}
-  \infer1{\f/ : \lnot \Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}
+  \infer1{\f/ : \lnot \Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}
   \hypo{}
   \ellipsis{}{}
-  \infer1{\g/ : \lnot \Inorganic{\First{\Pair{\Callias/}{\Sat{\Human{\Callias/}}{}{}}}}}
+  \infer1{\g/ : \lnot \Inorganic{\First{\Pair{\Callias/}{\Prf{\Human{\Callias/}}{}}}}}
   \infer3[\Elim{\Gen{\HumanSymbol/}{\Subst/}}]{\CaseThree{x}{\f/}{\g/} : \lnot \Inorganic{\First{x}}}
   \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{x}{\Gen{\HumanSymbol/}{\Subst/}}{\CaseThree{x}{\f/}{\g/}} : \Abstr{x}{\Gen{\HumanSymbol/}{\Subst/}}{\lnot \Inorganic{\First{x}}}}
 \end{prooftree*}
 
 \noindent
---- where $\f/$ and $\g/$ are abbreviations for denial functions. For example, $\f/$ is an abbreviation for $\Func{y}{\Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}{\CaseZero{y}}$, which is constructed as follows:
+--- where $\f/$ and $\g/$ are abbreviations for denial functions. For example, $\f/$ is an abbreviation for $\Func{y}{\Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}{\CaseZero{y}}$, which is constructed as follows:
 
 \begin{prooftree*}
-  \hypo{}
-  \infer1[\Form{\Subst/}]{\Subst/ : \Type/}
-
   \hypo{}
   \infer1[\Form{\Subst/}]{\Subst/ : \Type/}
   
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Intro{\SigmaBinder/}]{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}} : \Gen{\HumanSymbol/}{\Subst/}}
-  \infer1{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}} : \Subst/}
+  \infer1[\Intro{\SigmaBinder/}]{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}} : \Gen{\HumanSymbol/}{\Subst/}}
+  \infer1[\Elim{\SigmaBinder/}]{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}} : \Subst/}
 
-  \infer2[\Form{\Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}]{\Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}} : \Type/}
-  \infer2[\Hyp/]{\y/ : \Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}^{1}}
+  \infer2[\Form{\Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}]{\Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}} : \Type/}
+  \infer1[\Hyp/]{\y/ : \Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}^{1}}
   \hypo{}
   \infer1[\Form{\Empty/}]{\Empty/ : \Type/}
   \infer2{\CaseZero{y} : \Empty/}
-  \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{y}{\Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}{\CaseZero{y}} : \lnot \Inorganic{\First{\Pair{\Aspasia/}{\Sat{\Human{\Aspasia/}}{}{}}}}}
+  \infer1[\Intro{\PiBinder/}$^{1}$]{\Func{y}{\Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}{\CaseZero{y}} : \lnot \Inorganic{\First{\Pair{\Aspasia/}{\Prf{\Human{\Aspasia/}}{}}}}}
 \end{prooftree*}
 
 And $\g/$ can be constructed similarly.
@@ -914,11 +914,11 @@ We can construct an inhabitant for this type as well. This is done by pairing an
 \begin{prooftree*}
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Intro{\SigmaBinder/}]{\Pair{\Aspasia/}{\Sat{\Animal{\Aspasia/}}{}{}} : \Gen{\AnimalSymbol/}{\Subst/}}
+  \infer1[\Intro{\SigmaBinder/}]{\Pair{\Aspasia/}{\Prf{\Animal{\Aspasia/}}{}} : \Gen{\AnimalSymbol/}{\Subst/}}
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Intro{\Sat{\Rational{\Aspasia/}}{}{}}]{\Sat{\Rational{\Aspasia/}}{}{} : \Rational{\First{\Pair{\Aspasia/}{\Sat{\Animal{\Aspasia/}}{}{}}}}}
-  \infer2[\Intro{\SigmaBinder/}]{\Pair{\Pair{\Aspasia/}{\Sat{\Animal{\Aspasia/}}{}{}}}{\Sat{\Rational{\Aspasia/}}{}{}} : \Prod{x}{\Gen{\AnimalSymbol/}{\Subst/}}{\Rational{\First{x}}}}
+  \infer1[\Intro{\Prf{\Rational{\Aspasia/}}{}}]{\Prf{\Rational{\Aspasia/}}{} : \Rational{\First{\Pair{\Aspasia/}{\Prf{\Animal{\Aspasia/}}{}}}}}
+  \infer2[\Intro{\SigmaBinder/}]{\Pair{\Pair{\Aspasia/}{\Prf{\Animal{\Aspasia/}}{}}}{\Prf{\Rational{\Aspasia/}}{}} : \Prod{x}{\Gen{\AnimalSymbol/}{\Subst/}}{\Rational{\First{x}}}}
 \end{prooftree*}
 
 A similar inhabitant can be constructed for Callias, but not for Bucephalus, since there is no proof that Bucephalus is rational.
@@ -936,7 +936,7 @@ We can construct a type representing the particular denial that some animals are
   \hypo{}
   \ellipsis{}{}
   \infer1[\Form{\lnot \Rational{\First{x}}}]{\lnot \Rational{\First{x}} : \Type/}
-  \infer2[\Form{\PiBinder/}]{\Abstr{x}{\Gen{\AnimalSymbol/}{\Subst/}}{\lnot \Rational{\First{x}}} : \Type/}
+  \infer2[\Form{\SigmaBinder/}]{\Prod{x}{\Gen{\AnimalSymbol/}{\Subst/}}{\lnot \Rational{\First{x}}} : \Type/}
 \end{prooftree*}
 
 We can construct an inhabitant for this type too. This is done by pairing an inhabitant $\x/$ of $\Gen{\AnimalSymbol/}{\Subst/}$ with a proof $\f/$ of $\lnot \Rational{\First{x}}$. For example, this can be done with Bucephalus (where $\f/$ is a denial function, constructed the same way as before):
@@ -944,11 +944,11 @@ We can construct an inhabitant for this type too. This is done by pairing an inh
 \begin{prooftree*}
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Intro{\SigmaBinder/}]{\Pair{\Bucephalus/}{\Sat{\Animal{\Bucephalus/}}{}{}} : \Gen{\AnimalSymbol/}{\Subst/}}
+  \infer1[\Intro{\SigmaBinder/}]{\Pair{\Bucephalus/}{\Prf{\Animal{\Bucephalus/}}{}} : \Gen{\AnimalSymbol/}{\Subst/}}
   \hypo{}
   \ellipsis{}{}
-  \infer1[\Intro{\f/}]{\f/ : \lnot \Rational{\First{\Pair{\Bucephalus/}{\Sat{\Animal{\Bucephalus/}}{}{}}}}}
-  \infer2[\Intro{\SigmaBinder/}]{\Pair{\Pair{\Aspasia/}{\Sat{\Animal{\Aspasia/}}{}{}}}{\f/} : \Prod{x}{\Gen{\AnimalSymbol/}{\Subst/}}{\lnot \Rational{\First{x}}}}
+  \infer1[\Intro{\f/}]{\f/ : \lnot \Rational{\First{\Pair{\Bucephalus/}{\Prf{\Animal{\Bucephalus/}}{}}}}}
+  \infer2[\Intro{\SigmaBinder/}]{\Pair{\Pair{\Bucephalus/}{\Prf{\Animal{\Bucephalus/}}{}}}{\f/} : \Prod{x}{\Gen{\AnimalSymbol/}{\Subst/}}{\lnot \Rational{\First{x}}}}
 \end{prooftree*}
 
 
@@ -957,8 +957,9 @@ We can construct an inhabitant for this type too. This is done by pairing an inh
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Assertoric syllogisms}
+\label{sec:assertoric-syllogisms}
 
-Once a sufficient stock of categorical sentences are constructed, they can be put together to form syllogisms. Aristotle identifies a set of inference rules that specify how to form complete syllogisms (first figure syllogisms), and he also identifies some other rules that govern contradictories, contraries, indirect derivation, and conversions. In this section, I formalize these inference rules.
+Once a sufficient stock of categorical sentences are constructed, they can be put together to form syllogisms. As noted in section \ref{sec:aristotle-on-assertoric-syllogisms}, Aristotle identifies a set of inference rules that specify how to form complete syllogisms (first figure syllogisms), and he also identifies some other rules that govern contradictories, contraries, indirect derivation, and conversions. In this section, I formalize these inference rules.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -980,7 +981,7 @@ Above, I encoded categorical sentences as the following types:
 \end{tabular}
 \end{center}
 
-I abbreviate these types as follows:
+I abbreviate these types as follows (taking notation hints from \citealt{VonPlato2016} and the preface of \citealt{MartinLof1984}):
 
 \begin{align*}
   \Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}} &\equiv \PI{A}{B} \\
@@ -996,7 +997,7 @@ I use the following abbreviations of inference rules (for brevity, I suppress pr
 
 $$
 \begin{prooftree}
-  \hypo{\x/ : \A/^{1}}
+  \hypo{\x/ : \Gen{A}{\Domain/}^{1}}
   \ellipsis{}{\Dep{B}{\First{x}}}
   \infer1[\Intro{\PiBinder/}$^{1}$]{\Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}}
 \end{prooftree}
@@ -1025,7 +1026,7 @@ $$
 $$
 \begin{prooftree}
   \hypo{\Abstr{x}{\Gen{A}{\Domain/}}{\Dep{B}{\First{x}}}}
-  \hypo{\A/}
+  \hypo{\Gen{A}{\Domain/}}
   \infer2[\Elim{\PiBinder/}]{\Dep{B}{\First{x}}}
 \end{prooftree}
 \hskip 0.5cm \rightsquigarrow \hskip 0.5cm
@@ -1095,11 +1096,11 @@ $$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Complete syllogisms}
 
-As I noted earlier, Aristotle believes the four valid first figure syllogism forms are perfect or complete, in the sense that no further steps are needed to show that the conclusion follows from the premises.
+As noted earlier, Aristotle believes the four valid first figure syllogism forms are perfect or complete, in the sense that no further steps are needed to show that the conclusion follows from the premises.
 
 \begin{definition}[First figure syllogisms]
 
-The valid perfect or complete syllogisms first figure syllogisms have the following forms:
+The valid first figure syllogisms, which are complete, have the following forms:
 
 $$
 \begin{prooftree}
@@ -1155,7 +1156,7 @@ $$
 
 It is worth noting that these derivation trees naturally reflect Aristotle's own explanation of these rules. Aristotle believes these syllogism forms to be complete precisely in virtue of the meanings of the premises. In particular, it is the universal application (or denial) of a predicate that makes these inferences complete (\AnPr/~1.4, 25b37--40 and 26a1--2, referring back to 24b26--30).
 
-That is exactly what we see in these derivation trees. $\PI{B}{C}$ means that $\C/$ applies to every $\B/$, and $\PI{B}{C}$ means that $\B/$ applies to every $\A/$, so $\C/$ applies to every $\A/$. Here the proof terms are suppressed for space, but filling them in is routine, and it is easy to see that they map $\C/$ to $\B/$ to $\A/$ in exactly the way that Aristotle wants.
+That is exactly what we see in these derivations. $\PI{B}{C}$ means that $\C/$ applies to every $\B/$, and $\PI{A}{B}$ means that $\B/$ applies to every $\A/$, so $\C/$ applies to every $\A/$. Here the proof terms are suppressed for space, but filling them in is routine, and it is easy to see that they map $\C/$ to $\B/$ to $\A/$ in exactly the way that Aristotle wants.
 
 Here is a derivation of Darii:
 
@@ -1181,7 +1182,7 @@ And here is a derivation of Ferio:
   \infer2[\Intro{\SigmaBinder/}]{\SIG{A}{\lnot C}}
 \end{prooftree*}
 
-Aristotle believes that these last two syllogism forms are complete in virtue of the meaning of their premises too (\AnPr/~1.4, 26a23--25 and 26a25--28). It is the application (or denial) of a predicate to some or all of a collection that makes them complete. Again, even though the proof terms are suppressed, it is easy to see that these derivation trees generate witnesses in exactly the way that Aristotle wants.
+Aristotle believes that these last two syllogism forms are complete in virtue of the meaning of their premises too (\AnPr/~1.4, 26a23--25 and 26a25--28). It is the application (or denial) of a predicate to some or all of a collection that makes them complete. Again, even though the proof terms are suppressed, it is easy to see that these derivations generate witnesses in exactly the way that Aristotle wants.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1196,7 +1197,7 @@ For Aristotle, a pair of contradictories are such that one must be realized and 
 \end{align*}
 
 \begin{notation}
-To denote the contradictory of any categorical sentence $\X/$, I write $\Contradictory{X}$. 
+To denote the contradictory of a categorical sentence $\X/$, I write $\Contradictory{X}$. 
 \end{notation}
 
 \begin{definition}[Contradictories]
@@ -1261,7 +1262,7 @@ For Aristotle, a pair of contraries are such that only one of them can be realiz
 \end{equation*}
 
 \begin{notation}
-  To denote the contrary of any categorical sentence $\X/$, I write $\Contrary{X}$. 
+  To denote the contrary of a categorical sentence $\X/$, I write $\Contrary{X}$. 
 \end{notation}
 
 \begin{definition}[Contraries]
@@ -1297,36 +1298,38 @@ $$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Indirect derivation}
 
-Aristotle allows a schema for indirect derivation (which are sometimes called derivations from impossibility) as follows. Take any syllogism with a premise $\A/$ and conclusion $\B/$. Assume the premise $\A/$ and the contradictory $\Contradictory{B}$ of the intended conclusion. If one can then derive the contradictory $\Contradictory{A}$ or contrary $\Contrary{A}$ of the premise $\A/$, one may conclude that the intended conclusion $\B/$ must be realized (in the given domain). 
+Aristotle allows a schema for indirect derivation (which is sometimes called a derivation from impossibility) as follows. Take any syllogism with a premise $\X/$ and conclusion $\Y/$. Assume the premise $\X/$ and the contradictory $\Contradictory{Y}$ of the intended conclusion. If one can then derive the contradictory $\Contradictory{X}$ or contrary $\Contrary{X}$ of the premise $\X/$, one may conclude that the intended conclusion $\Y/$ must be realized (in the given domain). 
 
 \begin{definition}[Indirect derivation]
 
-An indirect derivation has the following form:
+An indirect derivation has the following form (where $\X/$ and $\Y/$ can be replaced only by categorical sentences):
 
 $$
 \begin{prooftree}
-  \hypo{\A/}
-  \hypo{\Contradictory{B}^{1}}
-  \ellipsis{}{\Contradictory{A}}
-  \infer2[\RAA/$^{1}$]{\B/}
+  \hypo{\X/}
+  \hypo{\Contradictory{Y}^{1}}
+  \ellipsis{}{\Contradictory{X}}
+  \infer2[\RAA/$^{1}$]{\Y/}
 \end{prooftree}
 \hskip 1cm
 \begin{prooftree}
-  \hypo{\A/}
-  \hypo{\Contradictory{B}^{1}}
-  \ellipsis{}{\Contrary{A}}
-  \infer2[\RAA/$^{1}$]{\B/}
+  \hypo{\X/}
+  \hypo{\Contradictory{Y}^{1}}
+  \ellipsis{}{\Contrary{X}}
+  \infer2[\RAA/$^{1}$]{\Y/}
 \end{prooftree}
 $$
 
 \end{definition}
+
+Notice the restriction on replacing $\X/$ and $\Y/$. These \RAA/ rules apply not to any arbitrary propositions, but only to categorical sentences.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conversions}
 
-Aristotle allows that certain forms of categorical sentences can be converted into other forms, under the condition that when the former are realized, the latter are too.
+Aristotle allows that certain forms of categorical sentences can be converted into other forms, since whenever the former are realized, the latter are too.
 
 \begin{definition}[Conversion]
 
@@ -1587,27 +1590,28 @@ Aristotle constructs Ferison (\AnPr/~1.6, 28b33--35) as follows:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Well-behavedness}
+\label{sec:well-behavedness}
 
-Under the above encoding, the theory of assertoric syllogisms is well-behaved, in the following sense. Categorical sentences are sound, contradictories and contraries behave as expected, and indirect schemata are constructive.
+Under the above encoding, the theory of assertoric syllogisms is well-behaved, in the following sense. Categorical sentences are sound, contradictories and contraries behave as expected, and indirect schemata are sound.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Soundness}
+\subsection{Categorical sentences}
 
 Categorical sentences are realized exactly when they should be, and they are not realized exactly when they should not be.
 
-For example, given the example domain and predicates from section \ref{subsection:example}, we can construct an inhabitant for the universal predication that all humans are rational.  This is exactly as one would expect, since in the example, there is a case where each human is rational.
+For instance, given the domain and predicates from section \ref{subsection:example}, we can construct an inhabitant for the universal predication that all humans are rational.  This is exactly as one would expect, since in the example, there is a case where each human is rational.
 
 By contrast, we cannot construct an inhabitant for the universal predication that all animals are rational, because in the case of Bucephalus, it cannot be shown that Bucephalus is rational. This too is exactly as we would expect.
 
-\begin{theorem}[Soundness]
+\begin{theorem}[Categorical sentence soundness]
   \label{theorem:soundness}
   The above encoding of Aristotelian categorical sentences is sound.
 \end{theorem}
 
 \begin{proof}
-  I must show that the theorem holds for $\PI{A}{B}$ and $\PI{A}{\lnot B}$ sentences, and for $\SIG{A}{B}$ and $\SIG{A}{\lnot B}$ sentences. If it holds for categorical sentences, it holds 
+  I must show that the theorem holds for (1) $\PI{A}{B}$ and $\PI{A}{\lnot B}$ sentences, and for (2) $\SIG{A}{B}$ and $\SIG{A}{\lnot B}$ sentences.
   
   \begin{enumerate}
   
@@ -1615,9 +1619,9 @@ By contrast, we cannot construct an inhabitant for the universal predication tha
   
       \begin{enumerate} 
       
-        \item If $\Gen{A}{\Domain/}$ has inhabitants, then you can construct an inhabiting function to $\Dep{B}{\First{x}}$ only if there is a proof that $\First{x}$ satisfies $\Dep{B}{x}$ (or $\lnot \Dep{B}{x}$) for each $\x/$, exactly as expected.
+        \item If $\Gen{A}{\Domain/}$ has inhabitants, then one can construct an inhabiting function to $\Dep{B}{\First{x}}$ only if there is a proof that $\First{x}$ satisfies $\Dep{B}{x}$ (or $\lnot \Dep{B}{x}$) for each $\x/$, exactly as expected.
     
-        \item If $\Gen{A}{\Domain/}$ has no inhabitants, then it is simply an alias for $\Empty/$. Of course, you can construct a function from $\Empty/$ to anything, but it is not a computable function. In order to apply it, you need an instance of $\Empty/$, which is impossible.
+        \item If $\Gen{A}{\Domain/}$ has no inhabitants, then it is simply an alias for $\Empty/$. Of course, one can construct a function from $\Empty/$ to anything, but it is not a computable function. In order to apply it, one needs an instance of $\Empty/$, which is impossible.
 
       \end{enumerate}
   
@@ -1632,19 +1636,19 @@ By contrast, we cannot construct an inhabitant for the universal predication tha
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Contradictories}
 
-Contradictories are actually contradictories as Aristotle intends them, in the sense that if a categorical sentence $\X/$ is not realized, its contradictory $\Contradictory{X}$ must be realized (and vice versa).
+Contradictories behave as Aristotle intends, in the sense that if a categorical sentence $\X/$ is not realized, its contradictory $\Contradictory{X}$ must be realized (and vice versa).
 
 \begin{theorem}[Contradictories]
   \label{theorem:contradictories}
-  Under the above encoding of Aristotelian categorical sentences, the contradictories are correct.
+  Under the above encoding of Aristotelian categorical sentences, the contradictory rules are sound.
 \end{theorem}
 
 \begin{proof}
-  It is enough to show that, for any categorical sentence $\A/$, an inhabitant of $\A/$ can be constructed iff no inhabitant of $\Contradictory{A}$ can be constructed. This applies to each case.
+  It is enough to show that, for any categorical sentence $\X/$, an inhabitant of $\X/$ can be constructed iff no inhabitant of $\Contradictory{X}$ can be constructed. I show that this holds for contradictory pair.
 
-  (1) If an inhabitant of $\PI{A}{B}$ can be constructed, then no inhabitants can be constructed for its contradictory $\SIG{A}{\lnot B}$, and vice versa. $\PI{A}{B}$ requires that there is a proof of $\Dep{B}{\First{x}}$ for every $\x/$ of $\Gen{A}{\Domain/}$, whereas $\SIG{A}{\lnot B}$ requires that $\Dep{B}{\First{x}}$ is empty for some $\x/$ of $\Gen{A}{\Domain/}$.
+  (1) Case: $\PI{A}{B}$ and $\SIG{A}{\lnot B}$ sentences. If an inhabitant of $\PI{A}{B}$ can be constructed, then no inhabitants can be constructed for its contradictory $\SIG{A}{\lnot B}$, and vice versa. For $\PI{A}{B}$ requires that there is a proof of $\Dep{B}{\First{x}}$ for every $\x/$ of $\Gen{A}{\Domain/}$, whereas $\SIG{A}{\lnot B}$ requires that $\Dep{B}{\First{x}}$ is empty for some $\x/$ of $\Gen{A}{\Domain/}$.
   
-  (2) Likewise for $\SIG{A}{B}$ and $\PI{A}{\lnot B}$.
+  (2) Case: $\SIG{A}{B}$ and $\PI{A}{\lnot B}$ sentences. The same reasoning applies.
 \end{proof}
 
 
@@ -1652,19 +1656,31 @@ Contradictories are actually contradictories as Aristotle intends them, in the s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Contraries}
 
-Contraries are actually contraries as Aristotle intends them, in the sense that if one of a pair of contraries $\X/$ or $\Contrary{X}$ is realized, the other cannot be realized, although both can fail to be realized.
+Contraries behave as Aristotle intends, in the sense that if one of a pair of contraries $\X/$ or $\Contrary{X}$ is realized, the other cannot be realized, although both can fail to be realized.
 
 \begin{theorem}[Contraries]
   \label{theorem:contraries}
-  Under the above encoding of Aristotelian categorical sentences, the contraries are correct.
+  Under the above encoding of Aristotelian categorical sentences, the contrary rules are sound.
 \end{theorem}
 
 \begin{proof}
   There are two things to show. 
   
-  (1) First, one must show that it is possible for each of $\PI{A}{B}$ and $\Contrary{\PI{A}{B}}$ to be uninhabited. This is evident, because if there are no $\A/$s, then neither $\PI{A}{B}$ nor $\PI{A}{\lnot B}$ can be inhabited.
+  \begin{enumerate} 
   
-  (2) Second, one must show that if $\PI{A}{B}$ is inhabited, then $\PI{A}{\lnot B}$ cannot be; and conversely, if $\PI{A}{\lnot B}$ is inhabited, then $\PI{A}{B}$ cannot be. Both directions are evident, because $\PI{A}{B}$ requires a proof of $\Dep{B}{\First{x}}$ for every $\x/$ of $\Gen{A}{\Domain/}$, whereas $\PI{A}{\lnot B}$ requires that $\Dep{B}{\First{x}}$ is empty for every $\x/$ of $\Gen{A}{\Domain/}$.
+    \item First, one must show that it is possible for each of $\PI{A}{B}$ and $\PI{A}{\lnot B}$ to be uninhabited. 
+  
+    \begin{enumerate}
+  
+      \item If $\Gen{A}{\Domain/}$ has inhabitants, then $\PI{A}{B}$ and $\PI{A}{\lnot B}$ can only be inhabited by functions that map every $\x/$ of $\Gen{A}{\Domain/}$ to a proof of $\Dep{B}{\First{x}}$ (or $\lnot \Dep{B}{\First{x}}$). But if some $\x/$s have a proof of $\Dep{B}{\First{x}}$ and some do not, then neither function can be constructed. 
+    
+      \item If $\Gen{A}{\Domain/}$ has no inhabitants, then it is simply an alias for $\Empty/$. Of course, one can construct functions from $\Empty/$ to anything (e.g., $\Dep{B}{\First{x}}$ and $\lnot \Dep{B}{\First{x}}$), but such are not computable functions, as stated already.
+  
+    \end{enumerate}
+  
+  \item Second, one must show that if $\PI{A}{B}$ is inhabited, then $\PI{A}{\lnot B}$ cannot be (and vice versa). Both directions are evident, because $\PI{A}{B}$ requires a proof of $\Dep{B}{\First{x}}$ for every $\x/$ of $\Gen{A}{\Domain/}$, whereas $\PI{A}{\lnot B}$ requires that $\Dep{B}{\First{x}}$ has no proof for every $\x/$ of $\Gen{A}{\Domain/}$.
+  
+  \end{enumerate}
 \end{proof}
 
 
@@ -1673,14 +1689,14 @@ Contraries are actually contraries as Aristotle intends them, in the sense that 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Indirect schema}
 
-In classical logic, indirect proof schemata are non-constructive. Under the above encoding, they are constructive.
+Indirect schema also behave as Aristotle intends, in the sense that if one can derive $\Contradictory{X}$ or $\Contrary{X}$ by assuming $\Contradictory{Y}$, then $\Y/$ must be inhabited.
 
-\begin{theorem}[Constructive indirect derivation]
-  Under the above encoding of Aristotelian categorical sentences, \RAA/ is constructive.
+\begin{theorem}[Indirect derivation soundness]
+  Under the above encoding of Aristotelian categorical sentences, the \RAA/ rules are sound.
 \end{theorem}
 
 \begin{proof}
-  One must show that whenever $\A/$ and $\Contradictory{A}$ (or $\A/$ and $\Contrary{A}$) can be derived from $\Contradictory{B}$, then $\B/$ is realized. This is clear from the following. If $\A/$ and $\Contradictory{A}$ (or $\A/$ and $\Contrary{A}$) can be derived from $\Contradictory{B}$, then $\Contradictory{B}$ is uninhabitable, since by Theorem \ref{theorem:contradictories}, $\A/$ and $\Contradictory{A}$ (or by Theorem \ref{theorem:contraries}, $\A/$ and $\Contrary{A}$) cannot both be inhabited at the same time. But if $\Contradictory{B}$ is uninhabited, then by Theorem \ref{theorem:contradictories}, $\B/$ is inhabited.
+  One must show that whenever $\X/$ and $\Contradictory{X}$ (or $\X/$ and $\Contrary{X}$) can be derived from $\Contradictory{Y}$, then $\Y/$ is inhabited. This is clear from the following. By Theorem \ref{theorem:contradictories}, $\X/$ and $\Contradictory{X}$ (or by Theorem \ref{theorem:contraries}, $\X/$ and $\Contrary{X}$) cannot both be inhabited at the same time. So, if we can derive $\X/$ and $\Contradictory{X}$ (or $\X/$ and $\Contrary{X}$) by assuming $\Contradictory{Y}$, then we are in an impossible state, and $\Contradictory{Y}$ must be the culprit. So, $\Contradictory{Y}$ must be uninhabitable. But if $\Contradictory{Y}$ is uninhabited, then by Theorem \ref{theorem:contradictories}, $\Y/$ must be inhabited.
 \end{proof}
 
 
@@ -1689,6 +1705,7 @@ In classical logic, indirect proof schemata are non-constructive. Under the abov
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Why type theory?}
+\label{sec:why-type-theory}
 
 As I see it, \CTT/ is a natural framework in which to encode Aristotle's theory of the assertoric syllogism. This is because it can easily capture certain distinctive features of Aristotle's theory, which I enumerate in this section.
 
@@ -1698,7 +1715,7 @@ As I see it, \CTT/ is a natural framework in which to encode Aristotle's theory 
 
 Aristotle seems to identify the validity of a syllogism with its constructibility. For him, first figure syllogisms are basic constructions which are ``valid'' in virtue of the way that their categorical sentences are constructed. Second and third figure syllogisms are more elaborate constructions which are ``valid'' if and only if they can be constructed from more basic constructions.
 
-\CTT/ is naturally suited to encode such an approach, since \CTT/ is itself a theory of constructions. For that matter, one could perform a similar encoding into the Calculus of Constructions (\citealt{CoquandHuet1988}), to much the same effect.
+\CTT/ is naturally suited to encode such an approach, since \CTT/ is itself a theory of constructions, and the encoding I present above captures Aristotle's desired constructibliity directly. For that matter, one could perform a similar encoding into the Calculus of Constructions (\citealt{CoquandHuet1988}), to much the same effect. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1712,23 +1729,21 @@ The encoding I present above captures this directly. One begins by fixing the do
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{First order encodings.}
 
-The structure of categorical sentences has always been a matter of controversy.  It is tempting to encode categorical sentences using first order logic, as (say) \citet{Lukasiewicz1957} did, using the implication connective. For example, one might encode ``all $\A/$s are $\B/$'' as $\forall \x/ : \D/, \Dep{A}{x} \Arrow/ \Dep{B}{x}$. 
+The structure of categorical sentences has always been a matter of controversy.  It is tempting to encode categorical sentences using first order logic, using the implication connective. For example, one might encode ``all $\A/$s are $\B/$'' as $\forall \x/ : \D/, \Dep{A}{x} \Arrow/ \Dep{B}{x}$. 
 
-There are two problems. First, such a sentence is true if there are no $\A/$s, when Aristotle thinks it should be false, so this does not capture Aristotle's thinking exactly. The above encoding handles the case where there are no $\A/$s in the right way.
+There are two problems. First, such a sentence is true if there are no $\A/$s, when Aristotle thinks it should be false, so this does not capture Aristotle's thinking exactly. The encoding I present above handles the case where there are no $\A/$s in the right way.
 
-Second, $\forall \x/ : \D/, \Dep{A}{x} \Arrow/ \Dep{B}{x}$ may be extensionally equivalent to ``all $\A/$s are $\B/$,'' but it does not capture what Aristotle is trying to say. Aristotle is saying nothing conditional with ``all $\A/$s are $\B/$,'' nor is he quantifying over the whole domain. Instead, he is applying the predicate $\B/$ to the objects in the collection of $\A/$s.
-
-The above encoding captures this directly. $\PI{A}{B}$ is constructed by building a typed collection of $\A/$s, and then applying the predicate $\B/$ to each of the objects in that collection.
+Second, $\forall \x/ : \D/, \Dep{A}{x} \Arrow/ \Dep{B}{x}$ may be extensionally equivalent to ``all $\A/$s are $\B/$,'' but it does not capture what Aristotle is trying to say. Aristotle is saying nothing conditional with ``all $\A/$s are $\B/$,'' nor is he quantifying over the whole domain. Instead, he is applying the predicate $\B/$ to the objects in the collection of $\A/$s. Again, the encoding I present above captures this directly.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Deduction encodings.}
+\paragraph{Deductions.}
 
-Some, such as \citet{Corcoran1974} and \citet{Smiley1973}, treat categorical sentences with a simple structure. For example, they read ``all $\A/$s are $\B/$'' as ``every $\A/$ is $\B/$,'' and then they take ``every \ldots~is \ldots'' as a copula, with $\A/$ and $\B/$ being the subject and predicate terms that fill in the blanks.
+Against \citet{Lukasiewicz1957}, \citet{Corcoran1974} and \citet{Smiley1973} cast Aristotle's theory as a system of natural deduction, where the conversions, Barbara and Celarent, and indirect derivation serve as the rules of inference. Second and third figure syllogisms are then constructed from those rules. 
 
-However, such a simple syntactic structure offers no help in explaining the validity of the syllogisms. That must be given through the semantics. But the semantics shows all three figures to be equally valid, so it is not clear why the first figures should be any more basic than the second and third.
+This does justice to the idea that second and third figure syllogisms are constructed from simpler syllogisms, but it renders Barbara and Celarent as rules, rather than constructions. As basic rules of the system, they have no computational content themselves.
 
-By contrast, the above encoding captures why the first figures are complete constructions, while the second and third are more elaborate constructions. The first figure encodings construct mappings or witnesses directly from the categorical sentences they are composed of, whereas the second and third figure syllogisms are constructed through intermediate steps.
+The encoding I present above gives computational content to all categorical sentences, and hence to any construction built from them, even Barbara and Celarent. There is construction all the way down, so to speak. This better captures Aristotle's claim that first figure syllogisms ``show'' or ``make evident'' their own validity (24b23ff).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1736,7 +1751,23 @@ By contrast, the above encoding captures why the first figures are complete cons
 
 Aristotle speaks a lot about ``saying something of a subject'' or ``denying something of a subject'' in \DeInterp/ and \AnPr/ This suggests that, in Aristotle's mind, the basic phenomenon that governs categorical assertions (and by extension, syllogisms) is that of applying and denying predicates.
 
-So I take the following notion of predication as the primary way to understand categorical sentences: Aristotle wants to apply (or deny) predicates to some portion of a collection of objects. In type theory, there is a natural way to formalize this, which I presented above, and this is another reason why type theory seems a natural fit for Aristotle's theory.\footnote{In the theory of the assertoric syllogism, Aristotle handles cases where we apply a predicate to \emph{all} or \emph{some} of a collection. But he also sometimes uses ``most'' quantifiers, as when we say ``most $\A/$s are $\B/$.'' The encoding I present above can be naturally extended to handle this case too. For more on generalizing quantification in type theory, see \citet{Sundholm1989}.}
+So I take the following notion of predication as the primary way to understand categorical sentences: Aristotle wants to apply (or deny) predicates to some portion of a collection of objects. In type theory, there is a natural way to formalize this, which I presented above, and this is another reason why type theory seems a natural fit for Aristotle's theory.\footnote{In the theory of the assertoric syllogism, Aristotle handles cases where we apply a predicate to \emph{all} or \emph{some} of a collection. But what about ``most'' quantifiers, as when we say ``most $\A/$s are $\B/$.'' The encoding I present above can be naturally extended to handle this case too, e.g., as in \citet{Sundholm1989}.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related work}
+\label{sec:related-work}
+
+Simultaneously and independently, \citet{CrubellierEtAl2019} developed an interpretation of Aristotle's theory of the assertoric syllogism that is also based on \CTT/. Their approach is distinctive in that it focuses on using echthesis in a dialogical framework to generate the meaning explanations of categorical propositions.
+
+It is interesting to note that in the system of \citet{CrubellierEtAl2019}, the proof terms are dialogues, whereas in mine they are lambda terms. Perhaps there is a sense in which one's choice of proof terms signals what one thinks syllogisms actually \emph{are}.
+
+Choosing dialogues as proof terms puts a strong emphasis on the dialectical notions from the \emph{Topics} (as in \citealt{MarionAndRuckert2016}). I came at this by reflecting on \emph{Posterior Analytics} 1.2 (71b9-s24), where Aristotle speaks of demonstrations as things we must perform in our minds. I took this to imply that Aristotle (at least sometimes) thinks of syllogisms as programs, which can be ``executed'' in the mind, in order to generate deductive knowledge.
+
+Regardless, there is much in these two \CTT/ approaches that is complimentary. Apart from \citet{CrubellierEtAl2019} and my encoding here, I know of no other attempt to interpret Aristotle's logic through \CTT/. The \CTT/ approach is novel, and hopefully, illuminating.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2091,16 +2122,32 @@ $$
   ``Aristotle's Natural Deduction System.''
   In \emph{Ancient Logic and Its Modern Interpretations}, ed. J. Corcoran.
   Dordrecht-Holland: Reidel, pp. 85--131.
+  
+\bibitem[Crubellier \emph{et al.}(2019)]{CrubellierEtAl2019}
+  Crubellier, M., M. Marion, Z. McConaughey, S. Rahman (2019)
+  ``Dialectic, the \emph{De Dictum de Omni}, and Echthesis.''
+  \emph{History and Philosophy of Logic} 40: 207--233.
 
 \bibitem[Lukasiewicz(1957)]{Lukasiewicz1957}
   Lukasiewicz, J.
   \emph{Aristotle's Syllogistic from the Standpoint of Modern Formal Logic}, 2nd ed.
   Oxford: Oxford University Press.
 
+\bibitem[Marion and R\"uckert(2016)]{MarionAndRuckert2016}
+  Marin, M. and H. R\"uckert (2016)
+  ``Aristotle on Universal Quantification: A Study from the Point of View of Game Semantics.''
+  \emph{History and Philosophy of Logic} 37: 201--229.
+
 \bibitem[Martin-L\"of(1984)]{MartinLof1984}
   Martin-L\"of, P. (1984)
   \emph{Intuitionistic Type Theory: Notes by Giovanni Sambin of a Series of Lectures given in Padua, June 1980}.
   Naples: Bibliopolis.
+  
+\bibitem[von Plato(2016)]{VonPlato2016}
+  von Plato, J. (2016)
+  ``Aristotle's Deductive Logic: A Proof-Theoretical Study.''
+  In \emph{Concepts of Proof in Mathematics, Philosophy, and Computer Science},
+  ed. P. Schuster. Berlin: Walter de Gruyter.
 
 \bibitem[Smiley(1973)]{Smiley1973}
   Smiley, T. (1973)
